@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Duwaini | مساحة خاصة</title>
+<link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg">
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap">
 <style>
-:root{--bg:#F3F6F4;--surface:#FFFFFF;--ink:#13231F;--muted:#5B6B66;--line:#DCE4E0;--accent:#0F6B5A;--accent-ink:#FFFFFF;--sun:#E2A631;--bad:#B3261E;--soft:#E5EFEB;
-  --display:"Reem Kufi","IBM Plex Sans Arabic",system-ui,sans-serif;--body:"IBM Plex Sans Arabic",system-ui,"Segoe UI",Tahoma,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;color-scheme:light}
-@media (prefers-color-scheme:dark){:root{--bg:#0D1714;--surface:#14211D;--ink:#E6EEEA;--muted:#93A6A0;--line:#24352F;--accent:#3FB79C;--accent-ink:#06110E;--sun:#F2B544;--bad:#F2B8B5;--soft:#1A2B26;color-scheme:dark}}
+:root{--bg:#0B0A08;--surface:#13110D;--ink:#EFE7D6;--muted:#A1978A;--line:#2B261D;--accent:#C9A063;--accent-ink:#17120A;--sun:#EFD9A3;--bad:#F2B8B5;--soft:#1A1712;
+  --display:"Reem Kufi","IBM Plex Sans Arabic",system-ui,sans-serif;--body:"IBM Plex Sans Arabic",system-ui,"Segoe UI",Tahoma,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 var(--body);min-height:100vh}
 .wrap{max-width:720px;margin:0 auto;padding-block:40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -22,7 +22,7 @@ label{display:block;font-weight:600;margin-bottom:6px}
 .row{display:flex;gap:8px;flex-wrap:wrap}
 input{flex:1 1 220px;min-width:0;font:16px var(--body);padding:11px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
 input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
-button{font:600 16px var(--body);padding:11px 22px;border-radius:10px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer}
+button{font:600 16px var(--body);padding:11px 22px;border-radius:10px;border:1px solid transparent;background:linear-gradient(120deg,#EFD9A3,#C9A063 50%,#8A673A);color:var(--accent-ink);cursor:pointer}
 button:disabled{opacity:.6;cursor:wait}
 .err{color:var(--bad);font-size:14px;margin-top:10px;min-height:1.4em}
 .list{display:grid;gap:12px;margin-top:8px}
@@ -40,6 +40,7 @@ button:disabled{opacity:.6;cursor:wait}
   <a class="back" href="./">→ الرجوع للموقع</a>
 
   <div class="box" id="gate">
+    <img src="assets/logo-mark.svg" alt="" width="64" height="64" style="display:block;margin-bottom:12px">
     <h1>مساحة خاصة</h1>
     <p>القسم ده محمي. اكتب الباسورد عشان تفتحه.</p>
     <form id="form" autocomplete="off">
