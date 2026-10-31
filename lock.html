@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Duwaini | تغيير الباسورد</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+:root{--bg:#F3F6F4;--surface:#FFFFFF;--ink:#13231F;--muted:#5B6B66;--line:#DCE4E0;--accent:#0F6B5A;--accent-ink:#FFFFFF;--sun:#E2A631;--bad:#B3261E;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#0D1714;--surface:#14211D;--ink:#E6EEEA;--muted:#93A6A0;--line:#24352F;--accent:#3FB79C;--accent-ink:#06110E;--sun:#F2B544;--bad:#F2B8B5;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,"Segoe UI",Tahoma,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding-block:32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{margin:0 0 4px;font-size:26px}
+p,li{color:var(--muted)}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;margin-top:18px;display:grid;gap:12px}
+label{font-weight:600}
+input,textarea{width:100%;font:15px ui-monospace,Consolas,monospace;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);direction:ltr;text-align:left}
+textarea{min-height:200px;resize:vertical}
+button{justify-self:start;font:600 15px system-ui,sans-serif;padding:10px 20px;border-radius:10px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.err{color:var(--bad);min-height:1.4em;margin:0}
+.ok{color:var(--accent);margin:0;min-height:1.4em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>تغيير الباسورد أو المحتوى الخاص</h1>
+  <p>الأداة دي بتشفّر المحتوى الخاص بالباسورد اللي تختاره. كل الشغل بيحصل جوه المتصفح، ومفيش حاجة بتتبعت لأي مكان.</p>
+
+  <div class="box">
+    <label for="items">المحتوى الخاص (روابط)</label>
+    <textarea id="items" spellcheck="false">[
+  {
+    "title": "مكالمات البيت",
+    "desc": "تطبيق المكالمات الصوتية والفيديو للآيباد",
+    "url": "https://tennen202015-eng.github.io/Call/"
+  }
+]</textarea>
+    <label for="pw1">الباسورد الجديد</label>
+    <input id="pw1" type="password" autocomplete="new-password">
+    <label for="pw2">اكتبه تاني للتأكيد</label>
+    <input id="pw2" type="password" autocomplete="new-password">
+    <p class="err" id="err" role="alert"></p>
+    <button id="make" type="button">شفّر</button>
+  </div>
+
+  <div class="box" id="outBox" hidden>
+    <label for="out">انسخ ده كله وحطه مكان محتوى ملف private-data.json</label>
+    <textarea id="out" readonly></textarea>
+    <button id="copy" class="ghost" type="button">انسخ</button>
+    <p class="ok" id="ok"></p>
+  </div>
+</div>
+<script>
+const toB64 = a => btoa(String.fromCharCode(...new Uint8Array(a)));
+document.getElementById("make").addEventListener("click", async () => {
+  const err = document.getElementById("err"); err.textContent = "";
+  const p1 = document.getElementById("pw1").value, p2 = document.getElementById("pw2").value;
+  let items;
+  try { items = JSON.parse(document.getElementById("items").value); if (!Array.isArray(items)) throw 0; }
+  catch { err.textContent = "المحتوى مكتوب غلط. لازم يفضل بنفس الشكل: أقواس [ ] وجواها { } وبين كل واحد فاصلة."; return; }
+  if (p1.length < 8) { err.textContent = "الباسورد لازم يكون ٨ حروف أو أكتر."; return; }
+  if (p1 !== p2) { err.textContent = "الباسوردين مش زي بعض."; return; }
+  const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12)), iter = 250000;
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(p1), "PBKDF2", false, ["deriveKey"]);
+  const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: iter, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["encrypt"]);
+  const data = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, new TextEncoder().encode(JSON.stringify(items)));
+  document.getElementById("out").value = JSON.stringify({ v: 1, iter, salt: toB64(salt), iv: toB64(iv), data: toB64(data) }, null, 2);
+  document.getElementById("outBox").hidden = false;
+});
+document.getElementById("copy").addEventListener("click", async () => {
+  const out = document.getElementById("out"), ok = document.getElementById("ok");
+  try { await navigator.clipboard.writeText(out.value); ok.textContent = "اتنسخ."; }
+  catch { out.select(); ok.textContent = "اضغط Ctrl + C عشان تنسخ."; }
+});
+</script>
+</body>
+</html>
